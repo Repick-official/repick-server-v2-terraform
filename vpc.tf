@@ -14,16 +14,6 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
-resource "aws_subnet" "repick-vpc-public-subnet" {
-  vpc_id            = aws_vpc.repick-vpc.id
-  cidr_block        = "10.0.1.0/24"
-  availability_zone = var.repick_vpc_public_subnet_availability_zone
-
-  tags = {
-    Name = "public-subnet"
-  }
-}
-
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.repick-vpc.id
 
@@ -33,8 +23,33 @@ resource "aws_route_table" "public" {
   }
 }
 
-resource "aws_route_table_association" "public" {
-  subnet_id      = aws_subnet.repick-vpc-public-subnet.id
+resource "aws_subnet" "repick-vpc-public-subnet-1" {
+  vpc_id            = aws_vpc.repick-vpc.id
+  cidr_block        = "10.0.1.0/24"
+  availability_zone = var.repick_vpc_public_subnet_1_availability_zone
+
+  tags = {
+    Name = "public-subnet-1"
+  }
+}
+
+resource "aws_route_table_association" "public-1" {
+  subnet_id      = aws_subnet.repick-vpc-public-subnet-1.id
+  route_table_id = aws_route_table.public.id
+}
+
+resource "aws_subnet" "repick-vpc-public-subnet-2" {
+  vpc_id            = aws_vpc.repick-vpc.id
+  cidr_block        = "10.0.4.0/24"
+  availability_zone = var.repick_vpc_public_subnet_2_availability_zone
+
+  tags = {
+    Name = "public-subnet-2"
+  }
+}
+
+resource "aws_route_table_association" "public-2" {
+  subnet_id      = aws_subnet.repick-vpc-public-subnet-2.id
   route_table_id = aws_route_table.public.id
 }
 
@@ -59,8 +74,8 @@ resource "aws_subnet" "repick-vpc-private-subnet-2" {
 }
 
 resource "aws_security_group" "repick-sg" {
-  name        = "repick-sg"
-  vpc_id      = aws_vpc.repick-vpc.id
+  name   = "repick-sg"
+  vpc_id = aws_vpc.repick-vpc.id
 
   ingress {
     from_port   = 22
@@ -102,9 +117,14 @@ output "vpc_id" {
   value       = aws_vpc.repick-vpc.id
 }
 
-output "public_subnet_id" {
+output "public_subnet_1_id" {
   description = "The ID of the public subnet"
-  value       = aws_subnet.repick-vpc-public-subnet.id
+  value       = aws_subnet.repick-vpc-public-subnet-1.id
+}
+
+output "public_subnet_2_id" {
+  description = "The ID of the public subnet"
+  value       = aws_subnet.repick-vpc-public-subnet-2.id
 }
 
 output "private_subnet_1_id" {
