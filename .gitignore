@@ -1,0 +1,6 @@
+**_variables.tf
+.terraform
+.terraform.lock.hcl
+.ssh
+.idea
+user_data.sh
