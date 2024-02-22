@@ -7,7 +7,7 @@ resource "aws_route53_zone" "repick_zone" {
 }
 
 resource "aws_acm_certificate" "repick_certificate" {
-  domain_name       = var.route53_zone_domain
+  domain_name       = "*.${var.route53_zone_domain}"
   validation_method = "DNS"
 
   lifecycle {

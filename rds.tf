@@ -20,7 +20,7 @@ resource "aws_db_instance" "repick-mysql" {
   db_subnet_group_name = aws_db_subnet_group.repick-db-subnet-group.name
   skip_final_snapshot  = true
 
-  vpc_security_group_ids = [aws_security_group.repick-sg.id]
+  vpc_security_group_ids = [aws_security_group.repick-rds-sg.id]
 
   tags = {
     Name = "repick-mysql"

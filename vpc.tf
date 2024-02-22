@@ -1,5 +1,6 @@
 resource "aws_vpc" "repick-vpc" {
-  cidr_block = "10.0.0.0/16"
+  cidr_block           = "10.0.0.0/16"
+  enable_dns_hostnames = true
 
   tags = {
     Name = "repick-vpc"
@@ -20,6 +21,10 @@ resource "aws_route_table" "public" {
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.igw.id
+  }
+
+  tags = {
+    Name = "repick-public-rt"
   }
 }
 
@@ -92,10 +97,41 @@ resource "aws_security_group" "repick-sg" {
   }
 
   ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = var.repick_sg_ingress_8080_cidr_blocks
+  }
+
+  ingress {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = var.repick_sg_ingress_443_cidr_blocks
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = var.repick_sg_engress_cidr_blocks
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+}
+
+resource "aws_security_group" "repick-rds-sg" {
+  name   = "repick-rds-sg"
+  vpc_id = aws_vpc.repick-vpc.id
+
+  ingress {
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
+    security_groups = [aws_security_group.repick-sg.id]
   }
 
   egress {
