@@ -1,3 +1,8 @@
+resource "aws_eip" "web" {
+  instance = aws_instance.webserver.id
+  domain   = "vpc"
+}
+
 resource "aws_instance" "webserver" {
   ami           = var.ec2_ami
   instance_type = var.ec2_instance_type
@@ -13,7 +18,6 @@ resource "aws_instance" "webserver" {
   tags = {
     Name = "repick-server"
   }
-
 }
 
 resource "aws_key_pair" "web" {
@@ -27,5 +31,5 @@ output "instance_id" {
 
 output "public_ip" {
   description = "The Public IP of the instance"
-  value       = aws_instance.webserver.public_ip
+  value       = aws_eip.web.public_ip
 }
