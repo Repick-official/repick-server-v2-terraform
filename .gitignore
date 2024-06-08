@@ -4,3 +4,4 @@
 .ssh
 .idea
 user_data.sh
+*.zip

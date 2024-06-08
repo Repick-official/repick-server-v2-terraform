@@ -15,13 +15,19 @@ resource "aws_instance" "webserver" {
 
   user_data = file("user_data.sh")
 
+  lifecycle {
+    ignore_changes = [user_data]
+  }
+
   tags = {
     Name = "repick-server"
   }
 }
 
 resource "aws_key_pair" "web" {
-  public_key = file("~/.ssh/id_rsa.pub")
+  key_name   = "repick-key"
+  public_key = file("./.ssh/repick-key.pub")
+
 }
 
 output "instance_id" {
