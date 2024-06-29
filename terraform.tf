@@ -4,5 +4,6 @@ terraform {
     key            = "server/terraform.tfstate"
     region         = "ap-northeast-2"
     dynamodb_table = "state-locking"
+    profile        = "repickdev"
   }
 }

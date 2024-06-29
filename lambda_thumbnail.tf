@@ -1,15 +1,15 @@
 data "archive_file" "archive_thumbnail_generator" {
-  type = "zip"
+  type        = "zip"
   source_file = "thumbnail_generator.py"
   output_path = "thumbnail_generator.zip"
 }
 
 resource "aws_lambda_function" "lambda_thumbnail" {
-  filename         = data.archive_file.archive_thumbnail_generator.output_path
-  function_name    = "thumbnail-generator"
-  role             = aws_iam_role.lambda_exec.arn
-  handler          = "lambda_function.lambda_handler"
-  runtime          = "python3.12"
+  filename      = data.archive_file.archive_thumbnail_generator.output_path
+  function_name = "thumbnail-generator"
+  role          = aws_iam_role.lambda_exec.arn
+  handler       = "thumbnail_generator.lambda_handler"
+  runtime       = "python3.12"
 
   source_code_hash = data.archive_file.archive_thumbnail_generator.output_base64sha256
 
