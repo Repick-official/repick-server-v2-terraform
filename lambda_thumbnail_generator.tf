@@ -1,14 +1,14 @@
 data "archive_file" "archive_thumbnail_generator" {
   type        = "zip"
-  source_file = "thumbnail_generator.py"
-  output_path = "thumbnail_generator.zip"
+  source_file = "lambda_thumbnail_generator.py"
+  output_path = "lambda_thumbnail_generator.zip"
 }
 
 resource "aws_lambda_function" "lambda_thumbnail" {
   filename      = data.archive_file.archive_thumbnail_generator.output_path
-  function_name = "thumbnail-generator"
+  function_name = "lambda_thumbnail-generator"
   role          = aws_iam_role.lambda_exec.arn
-  handler       = "thumbnail_generator.lambda_handler"
+  handler       = "lambda_thumbnail_generator.lambda_handler"
   runtime       = "python3.12"
 
   source_code_hash = data.archive_file.archive_thumbnail_generator.output_base64sha256
@@ -26,6 +26,7 @@ resource "aws_s3_bucket_notification" "example_notification" {
   lambda_function {
     lambda_function_arn = aws_lambda_function.lambda_thumbnail.arn
     events              = ["s3:ObjectCreated:*"]
+    filter_prefix       = "product/thumbnail/"
   }
 }
 
