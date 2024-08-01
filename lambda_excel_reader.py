@@ -8,6 +8,7 @@ import urllib.parse
 import urllib.error
 import mimetypes
 import uuid
+import os
 
 
 def get_size_info(row, category):
@@ -62,9 +63,6 @@ def lambda_handler(event, context):
     bucket_name = event['Records'][0]['s3']['bucket']['name']
     file_key = event['Records'][0]['s3']['object']['key']
 
-    print(bucket_name)
-    print(file_key)
-
     # S3 client
     s3 = boto3.client('s3')
 
@@ -79,7 +77,7 @@ def lambda_handler(event, context):
     for index, row in excel_data.iterrows():
         try:
             # Generate productCode
-            product_code = f"{row['user_id']}-{row['is_box_collect']}-{row['clothing_sales_id']}-{row['product_number']}"
+            product_code = f"{row['user_id']}-{row['clothing_sales_count']}-{row['product_number']}"
 
             # Define the S3 prefix for the images
             s3_prefix = f"images/{row['user_id']}/"
@@ -92,7 +90,7 @@ def lambda_handler(event, context):
 
             # Filter the image files based on the expected naming pattern
             image_pattern = re.compile(
-                f"{row['user_id']}-{row['is_box_collect']}-{row['clothing_sales_id']}-{row['product_number']}-(\d+)\.\w+")
+                f"{row['user_id']}-{row['clothing_sales_count']}-{row['product_number']}-(\d+)\.\w+")
             image_keys = [obj['Key'] for obj in s3_objects['Contents'] if re.search(image_pattern, obj['Key'])]
 
             # Prepare the files payload for images
@@ -111,28 +109,40 @@ def lambda_handler(event, context):
                 body.append('')
                 body.append(image_data)  # append bytes directly
 
-            # Define the product data
-            size_info = get_size_info(row, row['category'])
-            is_box_collect = 'true' if row['is_box_collect'] == 1 else 'false'
+            if pd.notnull(row['is_rejected']):
+                # Process rejected products
+                post_product = {
+                    "userId": row['user_id'],
+                    "clothingSalesCount": row['clothing_sales_count'],
+                    "productCode": product_code,
+                    "productName": row['product_name'],
+                    "brandName": row['brand_name'],
+                    "isRejected": "true"
+                }
 
-            post_product = {
-                "categories": [row['category']],
-                "styles": [row['style']],
-                "userId": row['user_id'],
-                "productCode": product_code,
-                "productName": row['product_name'],
-                "suggestedPrice": row['suggested_price'],
-                "predictPrice": row['predict_price'],
-                "discountRate": 0,
-                "brandName": row['brand_name'],
-                "description": row['description'],
-                "sizeInfo": size_info,
-                "qualityRate": row['quality_rate'],
-                "gender": row['gender'],
-                "isBoxCollect": is_box_collect,
-                "clothingSalesId": row['clothing_sales_id'],
-                "materials": row['materials'].split(',')
-            }
+            else:
+                # Process non-rejected products
+                # Define the product data
+                size_info = get_size_info(row, row['category'])
+
+                post_product = {
+                    "categories": [row['category']],
+                    "styles": [row['style']],
+                    "userId": row['user_id'],
+                    "clothingSalesCount": row['clothing_sales_count'],
+                    "productCode": product_code,
+                    "isRejected": "false",
+                    "productName": row['product_name'],
+                    "suggestedPrice": row['suggested_price'],
+                    "predictPrice": row['predict_price'],
+                    "discountRate": 0,
+                    "brandName": row['brand_name'],
+                    "description": row['description'],
+                    "sizeInfo": size_info,
+                    "qualityRate": row['quality_rate'],
+                    "gender": row['gender'],
+                    "materials": row['materials'].split(',')
+                }
 
             post_product_json = json.dumps(post_product, ensure_ascii=False)
 
@@ -149,7 +159,7 @@ def lambda_handler(event, context):
 
             headers = {
                 'accept': '*/*',
-                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyODg2MjMzNzQ3Iiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3MTg0MjE0MDYsImV4cCI6MTcyNzA2MTQwNn0.jI6XENuaZKPguz6S_olBk37GrnkLrQjc1RnV-4g6Aj0',
+                'Authorization': os.environ['TOKEN'],
                 'Content-Type': f'multipart/form-data; boundary={boundary}'
             }
 

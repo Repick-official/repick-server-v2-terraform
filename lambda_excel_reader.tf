@@ -18,6 +18,12 @@ resource "aws_lambda_function" "lambda_excel_reader" {
     var.layder_pandas
   ]
 
+  environment {
+    variables = {
+      TOKEN = var.token
+    }
+  }
+
   depends_on = [data.archive_file.archive_excel_reader]
 }
 
