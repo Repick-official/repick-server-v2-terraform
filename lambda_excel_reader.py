@@ -115,7 +115,6 @@ def lambda_handler(event, context):
                     "userId": row['user_id'],
                     "clothingSalesCount": row['clothing_sales_count'],
                     "productCode": product_code,
-                    "productName": row['product_name'],
                     "brandName": row['brand_name'],
                     "isRejected": "true"
                 }
