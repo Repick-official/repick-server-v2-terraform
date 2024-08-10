@@ -18,7 +18,7 @@ def _get_access_token():
     :return: Access token.
     """
     credentials = service_account.Credentials.from_service_account_file(
-        'repick-bb0d5-firebase-adminsdk-fdkh5-3050fe780b.json', scopes=SCOPES)
+        'service_account.json', scopes=SCOPES)
     request = google.auth.transport.requests.Request()
     credentials.refresh(request)
     return credentials.token
