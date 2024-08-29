@@ -1,0 +1,49 @@
+# This is a basic workflow that is manually triggered
+
+name: Manual workflow
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+on:
+  workflow_dispatch:
+    # Inputs the workflow accepts.
+    inputs:
+      name:
+        description: 'Person to greet'
+        default: 'Sean'
+        required: true
+        type: string
+      repository:
+        description: 'GitHub repository from which to download the file (e.g., user/repo)'
+        default: 'Repick-official/repick-server-v2'
+        required: true
+        type: string
+      branch:
+        description: 'Branch from which to download the file (e.g., main)'
+        default: 'main'
+        required: true
+        type: string
+      filepath:
+        description: 'Path to the file within the repository (e.g., README.md)'
+        default: 'readme.md'
+        required: true
+        type: string
+
+jobs:
+  download-file:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Greet the user
+    - name: Send greeting
+      run: echo "Hello ${{ inputs.name }}"
+
+    # Step 2: Download the file using curl
+    - name: Download file using curl
+      run: |
+        echo "Downloading ${{ inputs.filepath }} from ${{ inputs.repository }} on branch ${{ inputs.branch }}"
+        sudo curl -o readme.md https://raw.githubusercontent.com/${{ inputs.repository }}/${{ inputs.branch }}/${{ inputs.filepath }}
+
+    # Step 3: List the downloaded file to confirm
+    - name: Confirm file download
+      run: cat readme.md
