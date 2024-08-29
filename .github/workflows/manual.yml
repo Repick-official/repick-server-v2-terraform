@@ -48,16 +48,12 @@ jobs:
     - name: Confirm file download
       run: cat readme.md
 
-      # Step 4: Confirm file download by displaying the contents
-    - name: Confirm file download
-      run: cat README.md
-
-      # Step 5: Commit and push changes to the repository
+    # Step 4: Commit and push changes to the repository
     - name: Commit and push changes
       run: |
         git config --global user.name "github-actions"
         git config --global user.email "github-actions@github.com"
-        git add README.md
+        git add readme.md
         git commit -m "Update README.md from ${{ inputs.repository }} (branch: ${{ inputs.branch }})"
         git push
       env:
