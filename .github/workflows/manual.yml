@@ -20,12 +20,12 @@ on:
         type: string
       branch:
         description: 'Branch from which to download the file (e.g., main)'
-        default: 'main'
+        default: 'develop'
         required: true
         type: string
       filepath:
         description: 'Path to the file within the repository (e.g., README.md)'
-        default: 'readme.md'
+        default: 'README.md'
         required: true
         type: string
 
@@ -47,3 +47,18 @@ jobs:
     # Step 3: List the downloaded file to confirm
     - name: Confirm file download
       run: cat readme.md
+
+      # Step 4: Confirm file download by displaying the contents
+    - name: Confirm file download
+      run: cat README.md
+
+      # Step 5: Commit and push changes to the repository
+    - name: Commit and push changes
+      run: |
+        git config --global user.name "github-actions"
+        git config --global user.email "github-actions@github.com"
+        git add README.md
+        git commit -m "Update README.md from ${{ inputs.repository }} (branch: ${{ inputs.branch }})"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
