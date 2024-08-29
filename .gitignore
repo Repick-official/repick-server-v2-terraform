@@ -6,3 +6,4 @@
 user_data.sh
 *.zip
 *.json
+codepipeline/*

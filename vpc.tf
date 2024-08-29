@@ -38,7 +38,7 @@ resource "aws_subnet" "repick-vpc-public-subnet-1" {
   }
 }
 
-resource "aws_route_table_association" "public-1" {
+resource "aws_route_table_association" "public_subent_1_rt_association" {
   subnet_id      = aws_subnet.repick-vpc-public-subnet-1.id
   route_table_id = aws_route_table.public.id
 }
@@ -53,7 +53,7 @@ resource "aws_subnet" "repick-vpc-public-subnet-2" {
   }
 }
 
-resource "aws_route_table_association" "public-2" {
+resource "aws_route_table_association" "public_subnet_2_rt_association" {
   subnet_id      = aws_subnet.repick-vpc-public-subnet-2.id
   route_table_id = aws_route_table.public.id
 }
@@ -145,30 +145,4 @@ resource "aws_security_group" "repick-rds-sg" {
     create_before_destroy = true
   }
 
-}
-
-
-output "vpc_id" {
-  description = "The ID of the VPC"
-  value       = aws_vpc.repick-vpc.id
-}
-
-output "public_subnet_1_id" {
-  description = "The ID of the public subnet"
-  value       = aws_subnet.repick-vpc-public-subnet-1.id
-}
-
-output "public_subnet_2_id" {
-  description = "The ID of the public subnet"
-  value       = aws_subnet.repick-vpc-public-subnet-2.id
-}
-
-output "private_subnet_1_id" {
-  description = "The ID of the private subnet 1"
-  value       = aws_subnet.repick-vpc-private-subnet-1.id
-}
-
-output "private_subnet_2_id" {
-  description = "The ID of the private subnet 2"
-  value       = aws_subnet.repick-vpc-private-subnet-2.id
 }
