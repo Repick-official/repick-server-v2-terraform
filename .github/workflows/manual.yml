@@ -8,11 +8,6 @@ on:
   workflow_dispatch:
     # Inputs the workflow accepts.
     inputs:
-      name:
-        description: 'Person to greet'
-        default: 'Sean'
-        required: true
-        type: string
       repository:
         description: 'GitHub repository from which to download the file (e.g., user/repo)'
         default: 'Repick-official/repick-server-v2'
@@ -34,9 +29,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Step 1: Greet the user
-    - name: Send greeting
-      run: echo "Hello ${{ inputs.name }}"
+    # Step 1: Checkout
+    - name: Checkout the repository
+      uses: actions/checkout@v4
+      with:
+       token: ${{ secrets.GITHUB_TOKEN }}
 
     # Step 2: Download the file using curl
     - name: Download file using curl
@@ -53,8 +50,6 @@ jobs:
       run: |
         git config --global user.name "github-actions"
         git config --global user.email "github-actions@github.com"
-        git init
-        git remote add origin https://github.com/Repick-official/repick-server-v2-terraform.git
         git add readme.md
         git commit -m "Update README.md from ${{ inputs.repository }} (branch: ${{ inputs.branch }})"
         git push
