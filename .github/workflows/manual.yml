@@ -53,6 +53,8 @@ jobs:
       run: |
         git config --global user.name "github-actions"
         git config --global user.email "github-actions@github.com"
+        git init
+        git remote add origin https://github.com/Repick-official/repick-server-v2-terraform.git
         git add readme.md
         git commit -m "Update README.md from ${{ inputs.repository }} (branch: ${{ inputs.branch }})"
         git push
