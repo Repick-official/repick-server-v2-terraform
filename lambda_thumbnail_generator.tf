@@ -81,3 +81,24 @@ resource "aws_lambda_permission" "s3_invocation" {
   principal     = "s3.amazonaws.com"
   source_arn    = aws_s3_bucket.repick_product_bucket.arn
 }
+
+# Add an IAM policy for lambda exec role to get access
+resource "aws_iam_role_policy" "lambda_dynamodb_stream_policy" {
+  role = aws_iam_role.lambda_exec.id
+
+  policy      = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action   = [
+          "dynamodb:GetRecords",
+          "dynamodb:GetShardIterator",
+          "dynamodb:DescribeStream",
+          "dynamodb:ListStreams"
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      }
+    ]
+  })
+}
