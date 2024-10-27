@@ -13,9 +13,9 @@ resource "aws_codedeploy_app" "codedeploy_app" {
 
 # CodeDeploy Deployment Group
 resource "aws_codedeploy_deployment_group" "codedeploy_deployment_group" {
-  app_name               = aws_codedeploy_app.codedeploy_app.name
-  deployment_group_name  = "repick-codedeploy-deployment-group"
-  service_role_arn       = module.iam_role_codedeploy.iam_role_arn
+  app_name              = aws_codedeploy_app.codedeploy_app.name
+  deployment_group_name = "repick-codedeploy-deployment-group"
+  service_role_arn      = module.iam_role_codedeploy.iam_role_arn
 
   deployment_config_name = "CodeDeployDefault.OneAtATime"
 
@@ -23,7 +23,7 @@ resource "aws_codedeploy_deployment_group" "codedeploy_deployment_group" {
     ec2_tag_filter {
       key   = "Name"
       type  = "KEY_AND_VALUE"
-      value = "test-server"
+      value = "repick-server"
     }
   }
 

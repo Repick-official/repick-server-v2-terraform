@@ -86,11 +86,11 @@ resource "aws_lambda_permission" "s3_invocation" {
 resource "aws_iam_role_policy" "lambda_dynamodb_stream_policy" {
   role = aws_iam_role.lambda_exec.id
 
-  policy      = jsonencode({
+  policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
-        Action   = [
+        Action = [
           "dynamodb:GetRecords",
           "dynamodb:GetShardIterator",
           "dynamodb:DescribeStream",

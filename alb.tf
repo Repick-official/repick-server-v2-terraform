@@ -3,7 +3,7 @@ resource "aws_lb" "repick" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.repick-sg.id]
-  subnets            = [aws_subnet.repick-vpc-public-subnet-1.id, aws_subnet.repick-vpc-public-subnet-2.id]
+    subnets            = [aws_subnet.repick-vpc-public-subnet-1.id, aws_subnet.repick-vpc-public-subnet-2.id]
 
   tags = {
     Name = "repick-alb"

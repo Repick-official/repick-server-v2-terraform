@@ -15,6 +15,23 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
+# NAT Gateway
+#resource "aws_nat_gateway" "nat" {
+#  allocation_id = aws_eip.nat_eip.id
+#  subnet_id     = aws_subnet.repick-vpc-public-subnet-1.id
+#
+#  tags = {
+#    Name = "repick-nat-gw"
+#  }
+#
+#  depends_on = [aws_internet_gateway.igw]
+#}
+#
+## EIP for NATGW
+#resource "aws_eip" "nat_eip" {
+#  domain = "vpc"
+#}
+
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.repick-vpc.id
 
@@ -77,6 +94,30 @@ resource "aws_subnet" "repick-vpc-private-subnet-2" {
     Name = "private-subnet-2"
   }
 }
+
+# private subnet route table and association
+#resource "aws_route_table" "private" {
+#  vpc_id = aws_vpc.repick-vpc.id
+#
+#  route {
+#    cidr_block = "0.0.0.0/0"
+#    gateway_id = aws_nat_gateway.nat.id
+#  }
+#
+#  tags = {
+#    Name = "repick-private-rt"
+#  }
+#}
+#
+#resource "aws_route_table_association" "private_subnet_1_rt_association" {
+#  subnet_id      = aws_subnet.repick-vpc-private-subnet-1.id
+#  route_table_id = aws_route_table.private.id
+#}
+#
+#resource "aws_route_table_association" "private_subnet_2_rt_association" {
+#  subnet_id      = aws_subnet.repick-vpc-private-subnet-2.id
+#  route_table_id = aws_route_table.private.id
+#}
 
 resource "aws_security_group" "repick-sg" {
   name   = "repick-sg"
